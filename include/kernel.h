@@ -11,4 +11,6 @@ void printString(char* str);
 void readString(char* buf);
 void clearScreen();
 
+
+
 #endif // __KERNEL_H__
