@@ -20,13 +20,20 @@ void printString(char *str)
 void readString(char *buf)
 {
   //TODO: Implementasi fungsi untuk membaca string
-     int i = 0;
+    int i = 0;
     char c = 0;
     while (1) {
         c = interrupt(0x16, 0x0000, 0, 0, 0);
         if (c == 0x0D) break; // Enter
-        buf[i++] = c;
-        interrupt(0x10, 0x0E00 + c, 0, 0, 0);
+        if (c == 0x08 && i > 0) { // Backspace
+            i--;
+            interrupt(0x10, 0x0E00 + 0x08, current_color, 0, 0);
+            interrupt(0x10, 0x0E00 + ' ', current_color, 0, 0);
+            interrupt(0x10, 0x0E00 + 0x08, current_color, 0, 0);
+        } else if (c >= 0x20 && c <= 0x7E) { // Printable characters
+            buf[i++] = c;
+            interrupt(0x10, 0x0E00 + c, current_color, 0, 0);
+        }
     }
     buf[i] = '\0';
     printString("\r\n");
