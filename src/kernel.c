@@ -1,6 +1,7 @@
 #include "shell.h"
 #include "kernel.h"
 
+
 int main() {
   clearScreen();
   shell();
@@ -27,9 +28,9 @@ void readString(char *buf)
         if (c == 0x0D) break; // Enter
         if (c == 0x08 && i > 0) { // Backspace
             i--;
-            interrupt(0x10, 0x0E00 + 0x08, current_color, 0, 0);
-            interrupt(0x10, 0x0E00 + ' ', current_color, 0, 0);
-            interrupt(0x10, 0x0E00 + 0x08, current_color, 0, 0);
+            interrupt(0x10, 0x0E00 + 0x08, 0x07, 0, 0);
+            interrupt(0x10, 0x0E00 + ' ', 0x07, 0, 0);
+            interrupt(0x10, 0x0E00 + 0x08, 0x07, 0, 0);
         } else if (c >= 0x20 && c <= 0x7E) { // Printable characters
             buf[i++] = c;
             interrupt(0x10, 0x0E00 + c, current_color, 0, 0);
@@ -45,7 +46,7 @@ void clearScreen()
   int i;
   for (i = 0; i < 80 * 25 * 2; i += 2) {
         putInMemory(0xB800, i, ' ');
-        putInMemory(0xB800, i + 1, 0x07); // Put white color
+        putInMemory(0xB800, i + 1, 0x07); 
   }
   interrupt(0x10, 0x0200, 0, 0, 0);
 }
