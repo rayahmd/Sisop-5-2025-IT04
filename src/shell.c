@@ -109,6 +109,20 @@ void parseCommand(char *buf, char *cmd, char arg[2][64]) {
         return;
     }
 
+    // Feature 7: Yogurt command (random response)
+    if (strcmp(cmd, "yogurt") == 0) {
+        int r = getRandom() % 3;
+        if (r == 0) {
+            printString("gurt> yo\n");
+        } else if (r == 1) {
+            printString("gurt> ts unami gng </3\n");
+        } else {
+            printString("gurt> sygau\n");
+        }
+        return;
+    }
+
+
     // Default behavior (The Echo)
     printString(buf);
     printString("\n");
