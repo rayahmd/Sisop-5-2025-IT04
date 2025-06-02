@@ -33,7 +33,7 @@ void readString(char *buf)
             interrupt(0x10, 0x0E00 + 0x08, 0x07, 0, 0);
         } else if (c >= 0x20 && c <= 0x7E) { // Printable characters
             buf[i++] = c;
-            interrupt(0x10, 0x0E00 + c, current_color, 0, 0);
+            interrupt(0x10, 0x0E00 + c, 0x07, 0, 0);
         }
     }
     buf[i] = '\0';
