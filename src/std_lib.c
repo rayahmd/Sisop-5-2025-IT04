@@ -56,7 +56,7 @@ void strcpy(char *dst, char *src) {
 }
 
 // Clear buffer (set to zero)
-void clear(void *buf, int size) {
+void clear(byte *buf, unsigned int size) {
     char *p = (char *)buf;
     for (int i = 0; i < size; i++) {
         *p++ = 0;
@@ -64,7 +64,7 @@ void clear(void *buf, int size) {
 }
 
 // String to integer (supports negative numbers)
-int atoi(char *str) {
+void atoi(char *str, int *num) {
     int res = 0;
     int sign = 1;
     int i = 0;
@@ -81,7 +81,7 @@ int atoi(char *str) {
         res = res * 10 + str[i] - '0';
     }
 
-    return sign * res;
+    *num = sign * res;
 }
 
 // Integer to string (supports negative numbers)

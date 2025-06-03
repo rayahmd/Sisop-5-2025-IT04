@@ -1,7 +1,6 @@
 #include "shell.h"
 #include "kernel.h"
 
-
 int main() {
   clearScreen();
   shell();

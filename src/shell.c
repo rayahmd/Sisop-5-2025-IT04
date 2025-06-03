@@ -6,6 +6,11 @@ char username[16] = "user";
 char company_suffix[16] = "";
 byte current_color = 0x07; // Default white color
 
+void updatePrompt();
+void handleGrandCompany(char *arg);
+void handleCalculator(char *cmd, char arg[2][64]);
+int getRandom();
+
 void shell() {
     char buf[128];
     char cmd[16];
@@ -150,8 +155,9 @@ void handleGrandCompany(char *arg) {
 }
 
 void handleCalculator(char *cmd, char arg[2][64]) {
-    int x = atoi(arg[0]);
-    int y = atoi(arg[1]);
+    int x, y;
+    atoi(arg[0], &x);
+    atoi(arg[1], &y);
     int result = 0;
     char result_str[16];
 
