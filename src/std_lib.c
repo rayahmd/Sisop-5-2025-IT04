@@ -44,7 +44,7 @@ bool strcmp(char *s1, char *s2) {
         s1++;
         s2++;
     }
-    return (*(unsigned char *)s1 - *(unsigned char *)s2) == 0;
+    return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }
 
 // String copy
@@ -56,12 +56,13 @@ void strcpy(char *dst, char *src) {
 }
 
 // Clear buffer (set to zero)
-void clear(byte *buf, unsigned int size) {
-    char *p = (char *)buf;
-    for (int i = 0; i < size; i++) {
-        *p++ = 0;
+void clear(void *buf, unsigned int size) {
+    unsigned char *p = (unsigned char *)buf;
+    for (unsigned int i = 0; i < size; i++) {
+        p[i] = 0;
     }
 }
+
 
 // String to integer (supports negative numbers)
 void atoi(char *str, int *num) {

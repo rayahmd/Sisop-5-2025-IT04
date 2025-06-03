@@ -4,8 +4,7 @@
 
 char username[16] = "user";
 char company_suffix[16] = "";
-byte current_color = 0x07; // Default white color
-
+byte current_color = 0x07; // Default white colo
 void updatePrompt();
 void handleGrandCompany(char *arg);
 void handleCalculator(char *cmd, char arg[2][64]);
