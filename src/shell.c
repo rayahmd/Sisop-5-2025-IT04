@@ -4,11 +4,13 @@
 
 char username[16] = "user";
 char company_suffix[16] = "";
-byte current_color = 0x07; // Default white colo
+byte current_color = 0x07;
+
 void updatePrompt();
+void parseCommand(char *buf, char *cmd, char arg[2][64]);
 void handleGrandCompany(char *arg);
 void handleCalculator(char *cmd, char arg[2][64]);
-int getRandom();
+void changeColor(byte color);
 
 void shell() {
     char buf[128];
@@ -40,82 +42,54 @@ void updatePrompt() {
 }
 
 void parseCommand(char *buf, char *cmd, char arg[2][64]) {
-    int i = 0, j = 0, k = 0;
+    int i, j, k, r;
 
-    /* a) Ambil cmd (kata pertama) */
+    i = 0;
+    j = 0;
+    k = 0;
+
     while (buf[i] != ' ' && buf[i] != '\0' && i < 15) {
-        cmd[i] = buf[i];
-        i++;
+        cmd[i++] = buf[i];
     }
     cmd[i] = '\0';
 
-    /* b) Lewati spasi, ambil arg[0] */
-    if (buf[i] == ' ') i++;
+    while (buf[i] == ' ') i++;
     while (buf[i] != ' ' && buf[i] != '\0' && j < 63) {
         arg[0][j++] = buf[i++];
     }
     arg[0][j] = '\0';
 
-    /* c) Lewati spasi, ambil arg[1] */
-    if (buf[i] == ' ') i++;
+    while (buf[i] == ' ') i++;
     while (buf[i] != ' ' && buf[i] != '\0' && k < 63) {
         arg[1][k++] = buf[i++];
     }
     arg[1][k] = '\0';
 
-    // Feature 1: The Echo (default behavior)
-    if (strcmp(cmd, "") == 0) {
-        return;
-    }
-
-    // Feature 2: gurt/yo
-    if (strcmp(cmd, "yo") == 0) {
+    if (strcmp(cmd, "yo")) {
         printString("gurt\n");
-        return;
-    }
-    if (strcmp(cmd, "gurt") == 0) {
+    } else if (strcmp(cmd, "gurt")) {
         printString("yo\n");
-        return;
-    }
-
-    // Feature 3: Change username
-    if (strcmp(cmd, "user") == 0) {
+    } else if (strcmp(cmd, "user")) {
         if (arg[0][0] == '\0') {
             strcpy(username, "user");
-            printString("Username changed to user\n");
+            printString("Username reset to 'user'\n");
         } else {
             strcpy(username, arg[0]);
             printString("Username changed to ");
             printString(username);
             printString("\n");
         }
-        return;
-    }
-
-    // Feature 4: Grand Company
-    if (strcmp(cmd, "grandcompany") == 0) {
+    } else if (strcmp(cmd, "grandcompany")) {
         handleGrandCompany(arg[0]);
-        return;
-    }
-
-    // Feature 5: Clear command
-    if (strcmp(cmd, "clear") == 0) {
+    } else if (strcmp(cmd, "clear")) {
         clearScreen();
-        current_color = 0x07; // Reset to white
-        company_suffix[0] = '\0'; // Remove company suffix
-        return;
-    }
-
-    // Feature 6: Calculator commands
-    if (strcmp(cmd, "add") == 0 || strcmp(cmd, "sub") == 0 || 
-        strcmp(cmd, "mul") == 0 || strcmp(cmd, "div") == 0) {
+        company_suffix[0] = '\0';
+        changeColor(0x07);
+    } else if (strcmp(cmd, "add") || strcmp(cmd, "sub") ||
+               strcmp(cmd, "mul") || strcmp(cmd, "div")) {
         handleCalculator(cmd, arg);
-        return;
-    }
-
-    // Feature 7: Yogurt command (random response)
-    if (strcmp(cmd, "yogurt") == 0) {
-        int r = getRandom() % 3;
+    } else if (strcmp(cmd, "yogurt")) {
+        r = mod(getRandom(), 3);
         if (r == 0) {
             printString("gurt> yo\n");
         } else if (r == 1) {
@@ -123,50 +97,58 @@ void parseCommand(char *buf, char *cmd, char arg[2][64]) {
         } else {
             printString("gurt> sygau\n");
         }
-        return;
+    } else if (strcmp(cmd, "") == false) {
+        printString("Command not found: ");
+        printString(buf);
+        printString("\n");
     }
-
-
-    // Default behavior (The Echo)
-    printString(buf);
-    printString("\n");
 }
 
 void handleGrandCompany(char *arg) {
-    if (strcmp(arg, "maelstrom") == 0) {
-        clearScreen();
-        current_color = 0x04; // Red
-        strcpy(company_suffix, "Storm");
-    } else if (strcmp(arg, "twinadder") == 0) {
-        clearScreen();
-        current_color = 0x0E; // Yellow
-        strcpy(company_suffix, "Serpent");
-    } else if (strcmp(arg, "immortalflames") == 0) {
-        clearScreen();
-        current_color = 0x01; // Blue
-        strcpy(company_suffix, "Flame");
+    byte new_color;
+    char new_suffix[16];
+    bool valid_company;
+
+    new_color = current_color;
+    valid_company = true;
+
+    if (strcmp(arg, "maelstrom")) {
+        new_color = 0x04;
+        strcpy(new_suffix, "Storm");
+    } else if (strcmp(arg, "twinadder")) {
+        new_color = 0x0E;
+        strcpy(new_suffix, "Serpent");
+    } else if (strcmp(arg, "immortalflames")) {
+        new_color = 0x01;
+        strcpy(new_suffix, "Flame");
     } else {
-        printString("Invalid Grand Company\n");
+        printString("Invalid Grand Company. Options: maelstrom, twinadder, immortalflames\n");
+        valid_company = false;
     }
-    
-    // Change text color for future output
-    interrupt(0x10, 0x0E00 + ' ', current_color, 0, 0);
+
+    if (valid_company) {
+        clearScreen();
+        strcpy(company_suffix, new_suffix);
+        changeColor(new_color);
+    }
 }
 
 void handleCalculator(char *cmd, char arg[2][64]) {
-    int x, y;
-    atoi(arg[0], &x);
-    atoi(arg[1], &y);
-    int result = 0;
+    int x, y, result;
     char result_str[16];
 
-    if (strcmp(cmd, "add") == 0) {
+    result = 0;
+
+    atoi(arg[0], &x);
+    atoi(arg[1], &y);
+
+    if (strcmp(cmd, "add")) {
         result = x + y;
-    } else if (strcmp(cmd, "sub") == 0) {
+    } else if (strcmp(cmd, "sub")) {
         result = x - y;
-    } else if (strcmp(cmd, "mul") == 0) {
+    } else if (strcmp(cmd, "mul")) {
         result = x * y;
-    } else if (strcmp(cmd, "div") == 0) {
+    } else if (strcmp(cmd, "div")) {
         if (y == 0) {
             printString("Error: Division by zero\n");
             return;
@@ -180,7 +162,6 @@ void handleCalculator(char *cmd, char arg[2][64]) {
 }
 
 void changeColor(byte color) {
-    // Change text color for future output
     current_color = color;
     interrupt(0x10, 0x0E00 + ' ', color, 0, 0);
 }
