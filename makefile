@@ -17,7 +17,7 @@ shell:
 kernel:
 	bcc -ansi -c -o bin/kernel.o src/kernel.c -Iinclude
 	nasm -f as86 src/kernel.asm -o bin/kernel_asm.o
-
+    
 link:
 	ld86 -o bin/kernel.bin -d bin/kernel.o bin/kernel_asm.o bin/std_lib.o bin/shell.o
 	dd if=bin/bootloader.bin of=bin/floppy.img bs=512 count=1 conv=notrunc

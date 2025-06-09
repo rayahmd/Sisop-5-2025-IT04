@@ -28,34 +28,38 @@ int div(int a, int b) {
 }
 
 int mod(int a, int b) {
-    int sign;
+    //int sign;
 
-    sign = 1;
+   // sign = 1;
     if (b == 0) {
         return 0;
     }
 
-    if (a < 0) {
+    /*if (a < 0) {
         sign = -1;
         a = -a;
     }
     if (b < 0) {
+        sign = -1;
         b = -b;
     }
-
+*/
     while (a >= b) {
         a -= b;
     }
 
-    return sign * a;
+    return a;
 }
 
-bool strcmp(char *s1, char *s2) {
-    while (*s1 != '\0' && *s1 == *s2) {
+int strcmp(char *s1, char *s2) {
+    while (*s1 != '\0' || *s2 != '\0') {
+        if (*s1 != *s2) {
+            return 1;
+        }
         s1++;
         s2++;
     }
-    return (*s1 == *s2);
+    return 0;
 }
 
 void strcpy(char *dst, char *src) {
@@ -70,7 +74,7 @@ void strcpy(char *dst, char *src) {
 void clear(byte *buf, unsigned int size) {
     unsigned int i;
     for (i = 0; i < size; i++) {
-        buf[i] = 0;
+        buf[i] = '\0';
     }
 }
 
@@ -137,10 +141,4 @@ void itoa(int num, char *str) {
         start++;
         end--;
     }
-}
-
-int getRandom() {
-    static unsigned int seed = 42; 
-    seed = seed * 1103515245 + 12345;
-    return mod(div(seed, 65536), 32768);
 }

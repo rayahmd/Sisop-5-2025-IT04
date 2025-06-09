@@ -4,20 +4,21 @@
 
 char username[16] = "user";
 char company_suffix[16] = "";
-byte current_color = 0x07;
+int current_color = 0x07;
 
-void updatePrompt();
-void parseCommand(char *buf, char *cmd, char arg[2][64]);
-void handleGrandCompany(char *arg);
-void handleCalculator(char *cmd, char arg[2][64]);
-void changeColor(byte color);
+// void updatePrompt();
+// void parseCommand(char *buf, char *cmd, char arg[2][64]);
+// void handleGrandCompany(char *arg);
+// void handleCalculator(char *cmd, char arg[2][64]);
+// void changeColor(byte color);
 
 void shell() {
     char buf[128];
     char cmd[16];
     char arg[2][64];
 
-    printString("Welcome to EorzeOS!\n");
+    changeColor(current_color);
+    printString("Welcome to EorzeOS!\r\n");
     while (true) {
         updatePrompt();
         printString("> ");
@@ -42,7 +43,7 @@ void updatePrompt() {
 }
 
 void parseCommand(char *buf, char *cmd, char arg[2][64]) {
-    int i, j, k, r;
+    int i, j, k;
 
     i = 0;
     j = 0;
@@ -65,68 +66,72 @@ void parseCommand(char *buf, char *cmd, char arg[2][64]) {
     }
     arg[1][k] = '\0';
 
-    if (strcmp(cmd, "yo")) {
-        printString("gurt\n");
-    } else if (strcmp(cmd, "gurt")) {
-        printString("yo\n");
-    } else if (strcmp(cmd, "user")) {
+    if (strcmp(cmd, "yo") == 0) {
+        printString("gurt\r\n");
+    } else if (strcmp(cmd, "gurt") == 0) {
+        printString("yo\r\n");
+    } else if (strcmp(cmd, "user") == 0) {
         if (arg[0][0] == '\0') {
             strcpy(username, "user");
-            printString("Username reset to 'user'\n");
+            printString("Username reset to 'user'\r\n");
         } else {
             strcpy(username, arg[0]);
             printString("Username changed to ");
             printString(username);
-            printString("\n");
+            printString("\r\n");
         }
-    } else if (strcmp(cmd, "grandcompany")) {
+    } else if (strcmp(cmd, "grandcompany") == 0) {
         handleGrandCompany(arg[0]);
-    } else if (strcmp(cmd, "clear")) {
+    } else if (strcmp(cmd, "clear") == 0) {
         clearScreen();
         company_suffix[0] = '\0';
         changeColor(0x07);
-    } else if (strcmp(cmd, "add") || strcmp(cmd, "sub") ||
-               strcmp(cmd, "mul") || strcmp(cmd, "div")) {
+    } else if (strcmp(cmd, "add") == 0 || strcmp(cmd, "sub") == 0 ||
+               strcmp(cmd, "mul") == 0 || strcmp(cmd, "div") == 0) {
         handleCalculator(cmd, arg);
-    } else if (strcmp(cmd, "yogurt")) {
-        r = mod(getRandom(), 3);
+    } else if (strcmp(cmd, "yogurt") == 0) {
+        unsigned int random_value = getBiosTick();
+        int r = mod(random_value, 3);
         if (r == 0) {
-            printString("gurt> yo\n");
+            printString("gurt> yo\r\n");
         } else if (r == 1) {
-            printString("gurt> ts unami gng </3\n");
+            printString("gurt> ts unami gng </3\r\n");
         } else {
-            printString("gurt> sygau\n");
+            printString("gurt> sygau\r\n");
         }
-    } else if (strcmp(cmd, "") == false) {
+    } else if (strcmp(cmd, "") == 0) {
         printString("Command not found: ");
         printString(buf);
-        printString("\n");
+        printString("\r\n");
+    } else {
+        printString(buf);
+        printString("\r\n");
     }
 }
 
 void handleGrandCompany(char *arg) {
-    byte new_color;
+    int new_color;
     char new_suffix[16];
-    bool valid_company;
+    int valid_company;
 
     new_color = current_color;
-    valid_company = true;
+    valid_company = 0;
 
-    if (strcmp(arg, "maelstrom")) {
-        new_color = 0x04;
+    if (strcmp(arg, "maelstrom") == 0) {
+        new_color = 0x0C;
         strcpy(new_suffix, "Storm");
-    } else if (strcmp(arg, "twinadder")) {
+    } else if (strcmp(arg, "twinadder") == 0) {
         new_color = 0x0E;
         strcpy(new_suffix, "Serpent");
-    } else if (strcmp(arg, "immortalflames")) {
-        new_color = 0x01;
+    } else if (strcmp(arg, "immortalflames") == 0) {
+        new_color = 0x09;
         strcpy(new_suffix, "Flame");
     } else {
-        printString("Invalid Grand Company. Options: maelstrom, twinadder, immortalflames\n");
-        valid_company = false;
+        printString("Invalid Grand Company. Options: maelstrom, twinadder, immortalflames\r\n");
+        valid_company = 1;
     }
 
-    if (valid_company) {
+    if (valid_company == 0) {
         clearScreen();
         strcpy(company_suffix, new_suffix);
         changeColor(new_color);
@@ -142,15 +147,15 @@ void handleCalculator(char *cmd, char arg[2][64]) {
     atoi(arg[0], &x);
     atoi(arg[1], &y);
 
-    if (strcmp(cmd, "add")) {
+    if (strcmp(cmd, "add") == 0) {
         result = x + y;
-    } else if (strcmp(cmd, "sub")) {
+    } else if (strcmp(cmd, "sub") == 0) {
         result = x - y;
-    } else if (strcmp(cmd, "mul")) {
+    } else if (strcmp(cmd, "mul") == 0) {
         result = x * y;
-    } else if (strcmp(cmd, "div")) {
+    } else if (strcmp(cmd, "div") == 0) {
         if (y == 0) {
-            printString("Error: Division by zero\n");
+            printString("Error: Division by zero\r\n");
             return;
         }
         result = x / y;
@@ -158,10 +163,10 @@ void handleCalculator(char *cmd, char arg[2][64]) {
 
     itoa(result, result_str);
     printString(result_str);
-    printString("\n");
+    printString("\r\n");
 }
 
 void changeColor(byte color) {
     current_color = color;
-    interrupt(0x10, 0x0E00 + ' ', color, 0, 0);
+    interrupt(0x10, 0x0600, (color << 8), 0x0000, 0x184F);
 }

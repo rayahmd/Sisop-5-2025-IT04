@@ -42,10 +42,10 @@ void readString(char *buf)
 void clearScreen()
 {
   //TODO: Implementasi fungsi untuk membersihkan layar
-  int i;
-  for (i = 0; i < 80 * 25 * 2; i += 2) {
-        putInMemory(0xB800, i, ' ');
-        putInMemory(0xB800, i + 1, 0x07); 
-  }
+  // int i;
+  // for (i = 0; i < 80 * 25 * 2; i += 2) {
+  //       putInMemory(0xB800, i, ' ');
+  //       putInMemory(0xB800, i + 1, 0x07); 
+  // }
   interrupt(0x10, 0x0200, 0, 0, 0);
 }
