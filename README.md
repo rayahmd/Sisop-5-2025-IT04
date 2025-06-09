@@ -10,7 +10,7 @@
 
 ## Daftar Isi
 
-- [Kelompok](#kelompok)
+- [Kelompok](#kelompok-it04)
 - [Daftar Isi](#daftar-isi)
 - [Soal](#soal)
 - [Petunjuk Soal](#petunjuk-soal)
