@@ -1,11 +1,12 @@
-# Sisop-5-2025-IT-Template
+# Sisop-5-2025-IT04
 
-## Kelompok
+## KELOMPOK IT04
+| No | Nama                              | NRP         |
+|----|-----------------------------------|-------------|
+| 1  | Raya Ahmad Syarif                 | 5027241041  |
+| 2  | Salsa Bil Ulla         | 5027241052 |
+| 3  | Adinda Cahya Pramesti   | 5027241117  |
 
-Nama | NRP
---- | ---
-Amoes Noland | 5027231028
-Rafi' Afnaan Fathurrahman | 5027231040
 
 ## Daftar Isi
 
